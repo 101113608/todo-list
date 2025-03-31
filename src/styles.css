@@ -35,10 +35,111 @@ body {
     grid-template-columns: minmax(300px, 1fr) 6fr;
 }
 
+ul {
+    list-style: none;
+}
+
+button {
+    font-family: var(--default-font);
+    color: #fff;
+    border: none;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+button:focus {
+    outline: 1px solid #fff;
+}
+
+aside,
+main {
+    padding: 1rem 0;
+}
+
+/* Sidebar Styling */
+
 aside {
     background-color: var(--nero-clr);
+    display: grid;
+    grid-template-rows: min-content 1fr min-content;
 }
+
+.sidebar-heading,
+.project-list-item {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.sidebar-heading {
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sidebar-main li {
+    display: flex;
+}
+
+.project-list-item {
+    background-color: var(--nero-clr);
+    font-size: 1.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.todo-count {
+    color: var(--grey-clr);
+}
+
+.project-list-item:hover {
+    background-color: var(--grenadier-clr);
+}
+
+.project-list-item:hover:not(.selected-project) .todo-count {
+    color: #fff;
+}
+
+.project-list-item.selected-project {
+    background-color: var(--jaguar-clr);
+    font-weight: bold;
+}
+
+.sidebar-heading,
+.main-heading {
+    padding-bottom: 1rem;
+}
+
+.sidebar-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar-footer button {
+    font-size: 1rem;
+    background-color: var(--grenadier-clr);
+    padding: 0.5rem 1rem;
+    border-radius: 16px;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    -ms-border-radius: 16px;
+    -o-border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-footer button:hover {
+    background-color: var(--cinnabar-clr);
+}
+
+/* Main Section Styling*/
 
 main {
     background-color: var(--jaguar-clr);
+    padding: 1rem;
 }
