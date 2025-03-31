@@ -1,3 +1,9 @@
+@font-face {
+    font-family: "Source Sans 3";
+    src: url(fonts/SourceSans3-VariableFont_wght.ttf);
+}
+
+
 *,
 *::before,
 *::after {
@@ -16,12 +22,14 @@
     --cinnabar-clr: #db4b35;
     --grey-clr: #898585;
 
+    --default-font: "Source Sans 3", Arial, Helvetica, sans-serif;
 }
 
 body {
     min-height: 100svh;
     background-color: var(--nero-clr);
     color: #fff;
+    font-family: var(--default-font);
     font-size: 1.25rem;
     display: grid;
     grid-template-columns: minmax(300px, 1fr) 6fr;
