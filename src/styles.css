@@ -9,6 +9,28 @@
     padding: 0;
 }
 
+:root {
+    --nero-clr: #191919;
+    --jaguar-clr: #2a2a2e;
+    --grenadier-clr: #bd402c;
+    --cinnabar-clr: #db4b35;
+    --grey-clr: #898585;
+
+}
+
 body {
     min-height: 100svh;
+    background-color: var(--nero-clr);
+    color: #fff;
+    font-size: 1.25rem;
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) 6fr;
+}
+
+aside {
+    background-color: var(--nero-clr);
+}
+
+main {
+    background-color: var(--jaguar-clr);
 }
