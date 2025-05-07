@@ -3,7 +3,6 @@
     src: url(fonts/SourceSans3-VariableFont_wght.ttf);
 }
 
-
 *,
 *::before,
 *::after {
@@ -21,6 +20,10 @@
     --grenadier-clr: #bd402c;
     --cinnabar-clr: #db4b35;
     --grey-clr: #898585;
+    --raisin-clr: #252528;
+    --amber-clr: #ff9900;
+    --malachite-clr: #00ff4c;
+    --red-clr: #ff0000;
 
     --default-font: "Source Sans 3", Arial, Helvetica, sans-serif;
 }
@@ -49,10 +52,6 @@ button:hover {
     cursor: pointer;
 }
 
-button:focus {
-    outline: 1px solid #fff;
-}
-
 aside,
 main {
     padding: 1rem 0;
@@ -78,13 +77,18 @@ aside {
     justify-content: space-between;
 }
 
+.sidebar-main ul {
+    display: grid;
+    gap: 0.1rem;
+}
+
 .sidebar-main li {
     display: flex;
 }
 
 .project-list-item {
     background-color: var(--nero-clr);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     flex: 1;
@@ -96,17 +100,13 @@ aside {
     color: var(--grey-clr);
 }
 
-.project-list-item:hover {
-    background-color: var(--grenadier-clr);
-}
-
-.project-list-item:hover:not(.selected-project) .todo-count {
-    color: #fff;
-}
-
 .project-list-item.selected-project {
     background-color: var(--jaguar-clr);
     font-weight: bold;
+}
+
+.project-list-item:focus-visible {
+    outline: 2px solid #fff;
 }
 
 .sidebar-heading,
@@ -133,7 +133,8 @@ aside {
     gap: 0.5rem;
 }
 
-.sidebar-footer button:hover {
+.sidebar-footer button:hover,
+.todo-list-actions button:hover {
     background-color: var(--cinnabar-clr);
 }
 
