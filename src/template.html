@@ -26,6 +26,16 @@
     </aside>
     <main>
     </main>
+    <dialog class="project-modal" open="">
+        <div class="project-modal-content">
+            <form action="/" onsubmit="event.preventDefault()">
+                <h2>Add a Project</h2><input type="text" placeholder="Name of Project" required="" id="projectTitle"
+                    name="projectTitle">
+                <div class="action-buttons"><button type="reset">Cancel</button><button type="submit">Add</button></div>
+                <input type="hidden" id="currentProjectTitle" name="currentProjectTitle">
+            </form>
+        </div>
+    </dialog>
 </body>
 
 </html>

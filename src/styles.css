@@ -144,3 +144,96 @@ main {
     background-color: var(--jaguar-clr);
     padding: 1rem;
 }
+
+
+/* Dialog styling */
+
+dialog {
+    margin: auto;
+    padding: 1.25rem;
+    background-color: var(--nero-clr);
+    border: none;
+    color: #fff;
+    border-radius: 16px;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    -ms-border-radius: 16px;
+    -o-border-radius: 16px;
+}
+
+dialog {
+    inset: 0;
+}
+
+dialog::backdrop {
+    background-color: #b4b4b44d;
+    backdrop-filter: blur(5px);
+}
+
+.project-modal {
+    width: 25rem;
+}
+
+dialog form {
+    height: 100%;
+    display: grid;
+    gap: 1rem;
+}
+
+dialog input {
+    background-color: var(--jaguar-clr);
+}
+
+input {
+    border: none;
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: #fff;
+}
+
+dialog input {
+    height: 2.5rem;
+}
+
+dialog input,
+dialog textarea {
+    border-radius: 16px;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    -ms-border-radius: 16px;
+    -o-border-radius: 16px;
+}
+
+input,
+textarea {
+    font-family: var(--default-font);
+}
+
+.project-modal *:focus-visible {
+    outline: 2px solid #fff;
+}
+
+dialog .action-buttons {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    gap: 1rem;
+}
+
+.action-buttons button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+}
+
+.action-buttons button:nth-of-type(1) {
+    background-color: var(--jaguar-clr);
+}
+
+.action-buttons button:nth-of-type(2) {
+    background-color: var(--grenadier-clr);
+}
