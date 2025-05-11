@@ -1,8 +1,11 @@
 import "../styles.css";
 import { Projects, createProject, createTodo } from "./logic/projects";
 import { createSidebarProjectsList } from "./interface/sidebar/sidebar-projects-list";
+import { createProjectModal } from "./interface/modal/project-modal";
+import { Extract } from "./logic/utility";
 
 (function() {
+
     // DOM elements
     const body = document.querySelector("body");
     const main = document.querySelector("main");
@@ -17,6 +20,21 @@ import { createSidebarProjectsList } from "./interface/sidebar/sidebar-projects-
             return projects.getProjectViaIndex(projectTracker.index)
         },
     }
+    const modal = {
+        type: "",
+        domElement: null,
+        set(modalType, element) {
+            this.type = modalType;
+            this.domElement = element;
+        },
+        reset() {
+            this.type = "";
+            this.domElement = null;
+        },
+        isEmpty() {
+            return (this.type === "" && this.domElement === null);
+        }
+    };
 
     function renderSidebarMain(projectsList) {
         if (projectsList) {
@@ -46,6 +64,28 @@ import { createSidebarProjectsList } from "./interface/sidebar/sidebar-projects-
         }
     }
 
+    function openModal(modalType, modalElement, domElement = document.querySelector("body")) {
+        modal.set(modalType, modalElement);
+        domElement.append(modal.domElement);
+
+        if (modal.type !== "Error") {
+            modal.domElement.showModal();
+        }
+    }
+
+    function removeModal(modal, domElement = document.querySelector("body")) {
+        if (domElement.contains(modal.domElement)) {
+            domElement.removeChild(modal.domElement);
+            modal.reset();
+        }
+    }
+
+    function submitNewProject(formData, projects) {
+        const newProject = createProject(formData.projectTitle);
+
+        projects.addProject(newProject);
+    }
+
     sidebar.addEventListener("click", e => {
         if (e.target.hasAttribute("data-add-project-btn")) {
             openModal("Add Project", createProjectModal("Add"));
@@ -56,6 +96,33 @@ import { createSidebarProjectsList } from "./interface/sidebar/sidebar-projects-
             projectTracker.index = e.target.closest("[data-project-index]").getAttribute("data-project-index");
             highlightProjectElement(sidebarProjectsList, projectTracker.index);
 
+            return;
+        }
+    });
+
+    body.addEventListener("submit", e => {
+        if (!modal.isEmpty()) {
+            const formData = Extract.formValues(e.target);
+            switch (modal.type) {
+                case "Add Project":
+                    submitNewProject(formData, projects);
+                    break;
+                default:
+                    console.error("Provided modal type does not exist");
+            }
+            removeModal(modal);
+            renderSidebarMain(projects.getProjectsList());
+            return;
+        }
+    });
+
+    ["reset", "cancel"].forEach(eventListener => {
+        body.addEventListener(eventListener, e => removeModal(modal));
+    });
+
+    body.addEventListener("keydown", e => {
+        if (e.key === "Escape" && modal.domElement !== null) {
+            removeModal(modal, body);
             return;
         }
     });
