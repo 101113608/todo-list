@@ -178,7 +178,8 @@ main {
     gap: 0.5rem;
 }
 
-.project-actions {
+.project-actions,
+.todo-actions {
     display: flex;
     gap: 0.5rem;
 }
@@ -240,6 +241,11 @@ main {
     -moz-border-radius: 12px;
     -ms-border-radius: 12px;
     -o-border-radius: 12px;
+    transition: ease-in 500ms;
+    -webkit-transition: ease-in 500ms;
+    -moz-transition: ease-in 500ms;
+    -ms-transition: ease-in 500ms;
+    -o-transition: ease-in 500ms;
     background-color: var(--nero-clr);
     display: flex;
     align-items: center;
@@ -276,7 +282,6 @@ main {
     width: 24px;
 }
 
-
 .todo-item input[type="checkbox"] {
     accent-color: var(--cinnabar-clr);
     height: 18px;
@@ -312,9 +317,115 @@ main {
     justify-self: center;
 }
 
+.expand-arrow {
+    cursor: pointer;
+    transition: transform 500ms;
+    -webkit-transition: transform 500ms;
+    -moz-transition: transform 500ms;
+    -ms-transition: transform 500ms;
+    -o-transition: transform 500ms;
+}
+
+.todo-item[aria-expanded="true"] .expand-arrow {
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+}
+
+.todo-item[aria-expanded="true"] {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.todo-hidden-container {
+    padding: 0 3rem;
+    background-color: var(--nero-clr);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    transition: grid-template-rows 500ms;
+    -webkit-transition: grid-template-rows 500ms;
+    -moz-transition: grid-template-rows 500ms;
+    -ms-transition: grid-template-rows 500ms;
+    -o-transition: grid-template-rows 500ms;
+    display: grid;
+    grid-template-rows: 0fr;
+}
+
+.todo-hidden-container.show {
+    grid-template-rows: 1fr;
+    transition: ease-in 500ms;
+    -webkit-transition: ease-in 500ms;
+    -moz-transition: ease-in 500ms;
+    -ms-transition: ease-in 500ms;
+    -o-transition: ease-in 500ms;
+}
+
+.todo-expanded-information {
+    overflow: hidden;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.todo-expanded-information>div:first-child>h4:first-child {
+    padding-top: 1rem;
+}
+
+.todo-expanded-information p {
+    font-size: 1rem;
+}
+
+.priority-text::first-letter {
+    text-transform: capitalize;
+}
+
+.priority-text.red {
+    color: var(--red-clr)
+}
+
+.priority-text.amber {
+    color: var(--amber-clr);
+}
+
+.priority-text.green {
+    color: var(--malachite-clr);
+}
+
+textarea {
+    width: 99%;
+    min-height: 10rem;
+    margin-left: 1px;
+    margin-right: 1px;
+    background-color: var(--jaguar-clr);
+    color: #fff;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    resize: none;
+}
+
+.todo-notes textarea:focus {
+    outline: 1px solid #fff;
+}
+
+.todo-actions {
+    margin-right: 2px;
+    padding-bottom: 1rem;
+    justify-self: end;
+}
+
+.project-actions button,
+.todo-actions button {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+}
+
 /* Dialog styling */
 
 dialog {
+    inset: 0;
     margin: auto;
     padding: 1.25rem;
     background-color: var(--nero-clr);
@@ -325,10 +436,6 @@ dialog {
     -moz-border-radius: 16px;
     -ms-border-radius: 16px;
     -o-border-radius: 16px;
-}
-
-dialog {
-    inset: 0;
 }
 
 dialog::backdrop {
@@ -348,6 +455,7 @@ dialog form {
 
 dialog input {
     background-color: var(--jaguar-clr);
+    height: 2.5rem;
 }
 
 input {
@@ -355,10 +463,6 @@ input {
     padding: 0.5rem;
     font-size: 1rem;
     color: #fff;
-}
-
-dialog input {
-    height: 2.5rem;
 }
 
 dialog input,

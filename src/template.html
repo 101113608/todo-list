@@ -49,7 +49,7 @@
         <div class="main-content">
             <ul class="todo-list-container">
                 <li class="todo-container" data-todo-index="0">
-                    <div class="todo-item" data-todo-shown-container="" aria-expanded="false" role="group">
+                    <div class="todo-item" data-todo-shown-container="" aria-expanded="true" role="group">
                         <div class="checkbox-container"><input type="checkbox" data-todo-checked=""></div>
                         <div class="todo-simple-information">
                             <div class="todo-title">
@@ -64,9 +64,31 @@
                         <img src="images/icons/chevron-right.svg" alt="Expand Todo Arrow" width="30" height="30"
                             class="expand-arrow">
                     </div>
+                    <div class="todo-hidden-container show" data-todo-hidden-container="">
+                        <div class="todo-expanded-information">
+                            <div class="todo-description">
+                                <h4 class="description-heading">Description</h4>
+                                <p class="description-text" data-todo-description="">Legs day</p>
+                            </div>
+                            <div class="todo-priority">
+                                <h4 class="priority-heading">Priority</h4>
+                                <p class="priority-text red" data-todo-priority="">high</p>
+                            </div>
+                            <div class="todo-notes">
+                                <h4 class="notes-heading">Notes</h4><textarea data-todo-notes=""></textarea>
+                            </div>
+                            <div class="todo-actions" data-todo-actions="">
+                                <button data-edit-todo-btn="">
+                                    <img src="images/icons/edit-square.svg" alt="Edit Todo Icon" width="24" height="24">
+                                </button><button data-delete-todo-btn="">
+                                    <img src="images/icons/delete.svg" alt="Delete Todo Icon" width="24" height="24">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </li>
                 <li class="todo-container" data-todo-index="1">
-                    <div class="todo-item" data-todo-shown-container="" aria-expanded="false" role="group">
+                    <div class="todo-item" data-todo-shown-container="" aria-expanded="true" role="group">
                         <div class="checkbox-container">
                             <input type="checkbox" data-todo-checked="">
                         </div>
@@ -82,6 +104,29 @@
                         </div>
                         <img src="images/icons/chevron-right.svg" alt="Expand Todo Arrow" width="30" height="30"
                             class="expand-arrow">
+                    </div>
+                    <div class="todo-hidden-container checked show" data-todo-hidden-container="">
+                        <div class="todo-expanded-information">
+                            <div class="todo-description">
+                                <h4 class="description-heading">Description</h4>
+                                <p class="description-text" data-todo-description="">Programming</p>
+                            </div>
+                            <div class="todo-priority">
+                                <h4 class="priority-heading">Priority</h4>
+                                <p class="priority-text amber" data-todo-priority="">medium</p>
+                            </div>
+                            <div class="todo-notes">
+                                <h4 class="notes-heading">Notes</h4>
+                                <textarea data-todo-notes=""></textarea>
+                            </div>
+                            <div class="todo-actions" data-todo-actions="">
+                                <button data-edit-todo-btn="">
+                                    <img src="images/icons/edit-square.svg" alt="Edit Todo Icon" width="24" height="24">
+                                </button><button data-delete-todo-btn="">
+                                    <img src="images/icons/delete.svg" alt="Delete Todo Icon" width="24" height="24">
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </li>
             </ul>
