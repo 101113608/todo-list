@@ -162,6 +162,43 @@ import { Extract } from "./logic/utility";
         currentProject.addTodo(newTodo);
     }
 
+    function submitEditedProject(formData, currentProject) {
+        currentProject.setTitle(formData.projectTitle);
+    }
+
+    function submitEditedTodo(formData, currentProject) {
+        const currentTodo = currentProject.getTodo(formData.currentTodoTitle);
+
+        currentTodo.setTitle(formData.todoTitle);
+        currentTodo.setDescription(formData.todoDescription);
+        currentTodo.setPriority(formData.todoPriority);
+        currentTodo.setDueDate(formData.todoDueDate);
+    }
+
+    function setupProjectFormValues(project, domElement = document.querySelector("body")) {
+        const form = domElement.querySelector("form");
+
+        if (form) {
+            form.querySelector("#projectTitle").value = project.getTitle();
+            form.querySelector("#currentProjectTitle").value = project.getTitle();
+        } else {
+            console.error("Unable to get the DOM element for the Project Form.");
+        }
+    }
+
+    function setupTodoFormValues(todo, domElement = document.querySelector("body")) {
+        const form = domElement.querySelector("form");
+
+        if (form) {
+            form.querySelector("#todoTitle").value = todo.getTitle();
+            form.querySelector("#todoDueDate").value = todo.getDueDate().toISOString().split("T")[0];
+            form.querySelector("#todoPriority").value = todo.getPriority();
+            form.querySelector("#todoDescription").value = todo.getDescription();
+            form.querySelector("#currentTodoTitle").value = todo.getTitle();
+        } else {
+            console.error("Unable to get the DOM element for the Todo Form.");
+        }
+    }
 
     sidebar.addEventListener("click", e => {
         if (e.target.hasAttribute("data-add-project-btn")) {
@@ -187,6 +224,12 @@ import { Extract } from "./logic/utility";
                 case "Add Todo":
                     submitNewTodo(formData, projectTracker.getProject());
                     break;
+                case "Edit Project":
+                    submitEditedProject(formData, projectTracker.getProject());
+                    break;
+                case "Edit Todo":
+                    submitEditedTodo(formData, projectTracker.getProject());
+                    break;
                 default:
                     console.error("Provided modal type does not exist");
             }
@@ -208,6 +251,16 @@ import { Extract } from "./logic/utility";
     });
 
     main.addEventListener("click", e => {
+        if (e.target.closest("[data-project-actions]") && e.target.closest("button")) {
+
+            if (e.target.closest("button").hasAttribute("data-edit-project-btn")) {
+                openModal("Edit Project", createProjectModal("Edit"));
+                setupProjectFormValues(projectTracker.getProject());
+            }
+
+            return;
+        }
+
         if (e.target.closest("[data-add-todo-button]")) {
             openModal("Add Todo", createTodoModal("Add"));
             return;
@@ -215,6 +268,18 @@ import { Extract } from "./logic/utility";
 
         if (e.target.closest("[data-todo-shown-container]") && e.target.nodeName.toLowerCase() !== "input") {
             expandTodoItem(e);
+            return;
+        }
+
+        if (e.target.closest("[data-todo-actions]") && e.target.closest("button")) {
+            if (e.target.closest("button").hasAttribute("data-edit-todo-btn")) {
+                const currentTodoIndex = e.target.closest("[data-todo-index]").getAttribute("data-todo-index");
+                const currentTodo = projectTracker.getProject().getTodoViaIndex(currentTodoIndex);
+
+                openModal("Edit Todo", createTodoModal("Edit"));
+                setupTodoFormValues(currentTodo);
+            }
+
             return;
         }
     });
