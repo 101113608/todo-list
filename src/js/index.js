@@ -2,9 +2,11 @@ import "../styles.css";
 import { Projects, createProject, createTodo } from "./logic/projects";
 import { createSidebarProjectsList } from "./interface/sidebar/sidebar-projects-list";
 import { createProjectModal } from "./interface/modal/project-modal";
+import { createMainContent } from "./interface/main/main-todo-list";
+import { createMainHeading } from "./interface/main/main-project";
 import { Extract } from "./logic/utility";
 
-(function() {
+(function () {
 
     // DOM elements
     const body = document.querySelector("body");
@@ -45,6 +47,38 @@ import { Extract } from "./logic/utility";
         }
     }
 
+    function renderMain(project = null) {
+        main.textContent = "";
+        if (project) {
+            const heading = createMainHeading(project.getTitle());
+            let mainContent;
+
+            if (project.getTodoList().length === 0) {
+                // TODO: Create empty project/todo list splash page
+                mainContent = "";
+            } else {
+                mainContent = createMainContent(project.getTodoList());
+            }
+            main.append(heading, mainContent);
+        } else {
+            // TODO: Create empty projects list splash page
+            main.textContent = "";
+        }
+    }
+
+    function renderAll() {
+        const projectsList = projects.getProjectsList();
+
+        renderSidebarMain(projectsList);
+        if (projectsList.length === 0) {
+            renderMain();
+            return;
+        }
+
+        renderMain(projectTracker.getProject());
+        highlightProjectElement(sidebarProjectsList, projectTracker.index);
+    }
+
     function highlightProjectElement(sidebarElement, projectIndex) {
         const ul = Array
             .from(sidebarElement.firstElementChild.childNodes)
@@ -62,6 +96,36 @@ import { Extract } from "./logic/utility";
         } else {
             console.error(`Unable to retrieve selected project of index ${projectIndex}.`)
         }
+    }
+
+    function expandTodoItem(event) {
+        const todo = event.target.closest(".todo-item");
+
+        if (todo) {
+            const todoHiddenContainer = todo.closest(".todo-container").querySelector(".todo-hidden-container");
+            const ariaExpanded = setAriaExpanded(todo);
+            showTodoExpanded(ariaExpanded, todoHiddenContainer);
+        }
+    }
+
+    function showTodoExpanded(ariaExpanded, todoHiddenContainer) {
+        if (ariaExpanded) {
+            todoHiddenContainer.classList.add("show");
+        } else {
+            todoHiddenContainer.classList.remove("show");
+        }
+    }
+
+    function setAriaExpanded(todo) {
+        let ariaExpanded = todo.getAttribute("aria-expanded");
+
+        // Convert string to bool
+        ariaExpanded = ariaExpanded === "true";
+        ariaExpanded = !ariaExpanded;
+
+        todo.setAttribute("aria-expanded", ariaExpanded);
+
+        return ariaExpanded;
     }
 
     function openModal(modalType, modalElement, domElement = document.querySelector("body")) {
@@ -94,7 +158,7 @@ import { Extract } from "./logic/utility";
 
         if (e.target.closest("[data-project-index]")) {
             projectTracker.index = e.target.closest("[data-project-index]").getAttribute("data-project-index");
-            highlightProjectElement(sidebarProjectsList, projectTracker.index);
+            renderAll();
 
             return;
         }
@@ -127,9 +191,22 @@ import { Extract } from "./logic/utility";
         }
     });
 
+    main.addEventListener("click", e => {
+        if (e.target.closest("[data-todo-shown-container]") && e.target.nodeName.toLowerCase() !== "input") {
+            expandTodoItem(e);
+            return;
+        }
+    });
+
+    // Temp data
+    let newTodo1 = createTodo("Workout", "Leg day", "2025-07-07", "high");
+    let newTodo2 = createTodo("Homework", "Programming", "2025-09-17", "medium");
+
+    projects.getProject("Default").addTodo(newTodo1);
+    projects.getProject("Default").addTodo(newTodo2);
+
     projects.addProject(createProject("Hello World"));
 
-    renderSidebarMain(projects.getProjectsList());
-    highlightProjectElement(sidebarProjectsList, projectTracker.index);
+    renderAll();
 
 })();
