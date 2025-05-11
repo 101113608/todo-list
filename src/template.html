@@ -26,37 +26,6 @@
     </aside>
     <main>
     </main>
-    <dialog class="todo-modal" open="">
-        <div class="todo-modal-content">
-            <form action="/" onsubmit="event.preventDefault()">
-                <h2>Add a Todo</h2>
-                <div class="form-input form-todo-title">
-                    <label for="todoTitle">Title</label>
-                    <input type="text" id="todoTitle" name="todoTitle" required="">
-                </div>
-                <div class="form-input form-todo-due-date">
-                    <label for="todoDueDate">Due Date</label><input type="date" id="todoDueDate" name="todoDueDate"
-                        required="">
-                </div>
-                <div class="form-input form-todo-priority">
-                    <label for="todoPriority">Priority</label>
-                    <select name="todoPriority" id="todoPriority" required="">
-                        <option value="" selected="" disabled>-- Select a priority --</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                <div class="form-input form-todo-description">
-                    <label for="todoDescription">Description</label>
-                    <textarea id="todoDescription" name="todoDescription" required="">
-                    </textarea>
-                </div>
-                <div class="action-buttons"><button type="reset">Cancel</button><button type="submit">Add</button></div>
-                <input type="hidden" id="currentTodoTitle" name="currentTodoTitle">
-            </form>
-        </div>
-    </dialog>
 </body>
 
 </html>

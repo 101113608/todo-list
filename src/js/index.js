@@ -4,6 +4,7 @@ import { createSidebarProjectsList } from "./interface/sidebar/sidebar-projects-
 import { createProjectModal } from "./interface/modal/project-modal";
 import { createMainContent } from "./interface/main/main-todo-list";
 import { createMainHeading } from "./interface/main/main-project";
+import { createTodoModal } from "./interface/modal/todo-modal";
 import { Extract } from "./logic/utility";
 
 (function () {
@@ -150,6 +151,18 @@ import { Extract } from "./logic/utility";
         projects.addProject(newProject);
     }
 
+    function submitNewTodo(formData, currentProject) {
+        const newTodo = createTodo(
+            formData.todoTitle,
+            formData.todoDescription,
+            formData.todoDueDate,
+            formData.todoPriority
+        );
+
+        currentProject.addTodo(newTodo);
+    }
+
+
     sidebar.addEventListener("click", e => {
         if (e.target.hasAttribute("data-add-project-btn")) {
             openModal("Add Project", createProjectModal("Add"));
@@ -171,11 +184,14 @@ import { Extract } from "./logic/utility";
                 case "Add Project":
                     submitNewProject(formData, projects);
                     break;
+                case "Add Todo":
+                    submitNewTodo(formData, projectTracker.getProject());
+                    break;
                 default:
                     console.error("Provided modal type does not exist");
             }
             removeModal(modal);
-            renderSidebarMain(projects.getProjectsList());
+            renderAll();
             return;
         }
     });
@@ -192,6 +208,11 @@ import { Extract } from "./logic/utility";
     });
 
     main.addEventListener("click", e => {
+        if (e.target.closest("[data-add-todo-button]")) {
+            openModal("Add Todo", createTodoModal("Add"));
+            return;
+        }
+
         if (e.target.closest("[data-todo-shown-container]") && e.target.nodeName.toLowerCase() !== "input") {
             expandTodoItem(e);
             return;
