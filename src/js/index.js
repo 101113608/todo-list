@@ -6,6 +6,8 @@ import { createTodoModal } from "./interface/modal/todo-modal";
 import { createConfirmModal } from "./interface/modal/confirm-modal";
 import { createMainContent } from "./interface/main/main-todo-list";
 import { createMainHeading } from "./interface/main/main-project";
+import { createMainEmptyProjectsList } from "./interface/main/main-empty-projects-list";
+import { createMainEmptyTodoList } from "./interface/main/main-empty-todo-list";
 import { Extract } from "./logic/utility";
 
 (function () {
@@ -56,15 +58,13 @@ import { Extract } from "./logic/utility";
             let mainContent;
 
             if (project.getTodoList().length === 0) {
-                // TODO: Create empty project/todo list splash page
-                mainContent = "";
+                mainContent = createMainEmptyTodoList(project.getTitle());
             } else {
                 mainContent = createMainContent(project.getTodoList());
             }
             main.append(heading, mainContent);
         } else {
-            // TODO: Create empty projects list splash page
-            main.textContent = "";
+            main.append(createMainEmptyProjectsList());
         }
     }
 
