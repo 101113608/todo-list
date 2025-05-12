@@ -266,6 +266,15 @@ import { Extract } from "./logic/utility";
         selectedTodo.checkbox.setAttribute("checked", "");
     }
 
+    function clearCheckedTodos(currentProject) {
+        currentProject.getTodoList().forEach(todo => {
+            if (todo.getChecked() === "true") {
+                const todoTitle = todo.getTitle();
+                currentProject.removeTodo(todoTitle);
+            }
+        });
+    }
+
     sidebar.addEventListener("click", e => {
         if (e.target.hasAttribute("data-add-project-btn")) {
             openModal("Add Project", createProjectModal("Add"));
@@ -350,6 +359,12 @@ import { Extract } from "./logic/utility";
         if (e.target.closest("[data-todo-list-actions]") && e.target.closest("button")) {
             if (e.target.closest("button").hasAttribute("data-add-todo-button")) {
                 openModal("Add Todo", createTodoModal("Add"));
+                return;
+            }
+
+            if (e.target.closest("button").hasAttribute("data-clear-checked-button")) {
+                clearCheckedTodos(projectTracker.getProject());
+                renderAll()
                 return;
             }
         }
