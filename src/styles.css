@@ -29,7 +29,7 @@
 }
 
 body {
-    min-height: 100svh;
+    height: 100svh;
     background-color: var(--nero-clr);
     color: #fff;
     font-family: var(--default-font);
@@ -55,6 +55,7 @@ button:hover {
 aside,
 main {
     padding: 1rem 0;
+    overflow-y: auto;
 }
 
 /* Sidebar Styling */
