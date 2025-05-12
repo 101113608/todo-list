@@ -2,9 +2,10 @@ import "../styles.css";
 import { Projects, createProject, createTodo } from "./logic/projects";
 import { createSidebarProjectsList } from "./interface/sidebar/sidebar-projects-list";
 import { createProjectModal } from "./interface/modal/project-modal";
+import { createTodoModal } from "./interface/modal/todo-modal";
+import { createConfirmModal } from "./interface/modal/confirm-modal";
 import { createMainContent } from "./interface/main/main-todo-list";
 import { createMainHeading } from "./interface/main/main-project";
-import { createTodoModal } from "./interface/modal/todo-modal";
 import { Extract } from "./logic/utility";
 
 (function () {
@@ -186,6 +187,23 @@ import { Extract } from "./logic/utility";
         }
     }
 
+    function submitTodoDeletion(formData, currentProject) {
+        currentProject.removeTodo(formData.deleteTodoTitle);
+    }
+
+    function reindexProjectTracker(index) {
+        if (index !== 0) {
+            projectTracker.index = index - 1;
+        }
+    }
+
+    function submitProjectDeletion(projects, currentProject) {
+        const currentProjectIndex = projects.getIndexOfProject(currentProject.getTitle());
+
+        reindexProjectTracker(currentProjectIndex);
+        projects.removeProject(currentProject.getTitle());
+    }
+
     function setupTodoFormValues(todo, domElement = document.querySelector("body")) {
         const form = domElement.querySelector("form");
 
@@ -230,6 +248,12 @@ import { Extract } from "./logic/utility";
                 case "Edit Todo":
                     submitEditedTodo(formData, projectTracker.getProject());
                     break;
+                case "Delete Project":
+                    submitProjectDeletion(projects, projectTracker.getProject())
+                    break;
+                case "Delete Todo":
+                    submitTodoDeletion(formData, projectTracker.getProject());
+                    break;
                 default:
                     console.error("Provided modal type does not exist");
             }
@@ -258,6 +282,13 @@ import { Extract } from "./logic/utility";
                 setupProjectFormValues(projectTracker.getProject());
             }
 
+            if (e.target.closest("button").hasAttribute("data-delete-project-btn")) {
+                openModal(
+                    "Delete Project",
+                    createConfirmModal("Project", projectTracker.getProject().getTitle())
+                );
+            }
+
             return;
         }
 
@@ -278,6 +309,11 @@ import { Extract } from "./logic/utility";
 
                 openModal("Edit Todo", createTodoModal("Edit"));
                 setupTodoFormValues(currentTodo);
+            }
+
+            if (e.target.closest("button").hasAttribute("data-delete-todo-btn")) {
+                const todoTitle = e.target.closest("[data-todo-index]").querySelector("[data-todo-title]").textContent;
+                openModal("Delete Todo", createConfirmModal("Todo", todoTitle));
             }
 
             return;
