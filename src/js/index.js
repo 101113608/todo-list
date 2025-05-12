@@ -130,6 +130,18 @@ import { Extract } from "./logic/utility";
         return ariaExpanded;
     }
 
+    function setTodoNotes(event, currentProject) {
+        const currentTodoTitle = event.target.closest(".todo-container").querySelector(".todo-title").textContent;
+
+        if (currentTodoTitle) {
+            const textAreaValue = event.target.value;
+            const currentTodo = currentProject.getTodo(currentTodoTitle);
+            currentTodo.setNotes(textAreaValue);
+        } else {
+            console.error(`Unable to save '${currentTodoTitle}' notes: unable to retrieve the selected todo.`)
+        }
+    }
+
     function openModal(modalType, modalElement, domElement = document.querySelector("body")) {
         modal.set(modalType, modalElement);
         domElement.append(modal.domElement);
@@ -259,6 +271,13 @@ import { Extract } from "./logic/utility";
             }
             removeModal(modal);
             renderAll();
+            return;
+        }
+    });
+
+    body.addEventListener("change", e => {
+        if (e.target.hasAttribute("data-todo-notes")) {
+            setTodoNotes(e, projectTracker.getProject());
             return;
         }
     });
