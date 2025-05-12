@@ -230,6 +230,42 @@ import { Extract } from "./logic/utility";
         }
     }
 
+    function setTodoChecked(event, currentProject) {
+        const todoElement = event.target.closest("[data-todo-index]");
+        const selectedTodo = {
+            domElement: todoElement,
+            shownContainer: todoElement.querySelector("[data-todo-shown-container]"),
+            hiddenContainer: todoElement.querySelector("[data-todo-hidden-container]"),
+            checkbox: event.target,
+        }
+
+        if (event.target.hasAttribute("checked")) {
+            removeChecked(selectedTodo, currentProject);
+        } else {
+            addChecked(selectedTodo, currentProject);
+        }
+    }
+
+    function removeChecked(selectedTodo, currentProject) {
+        currentProject
+            .getTodoList()[selectedTodo.domElement.getAttribute("data-todo-index")]
+            .setChecked("false");
+
+        selectedTodo.shownContainer.classList.remove("checked", "crossed-out");
+        selectedTodo.hiddenContainer.classList.remove("checked");
+        selectedTodo.checkbox.removeAttribute("checked");
+    }
+
+    function addChecked(selectedTodo, currentProject) {
+        currentProject
+            .getTodoList()[selectedTodo.domElement.getAttribute("data-todo-index")]
+            .setChecked("true");
+
+        selectedTodo.shownContainer.classList.add("checked", "crossed-out");
+        selectedTodo.hiddenContainer.classList.add("checked");
+        selectedTodo.checkbox.setAttribute("checked", "");
+    }
+
     sidebar.addEventListener("click", e => {
         if (e.target.hasAttribute("data-add-project-btn")) {
             openModal("Add Project", createProjectModal("Add"));
@@ -337,6 +373,11 @@ import { Extract } from "./logic/utility";
                 openModal("Delete Todo", createConfirmModal("Todo", todoTitle));
             }
 
+            return;
+        }
+
+        if (e.target.hasAttribute("data-todo-checked")) {
+            setTodoChecked(e, projectTracker.getProject());
             return;
         }
     });
