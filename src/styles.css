@@ -423,6 +423,15 @@ textarea {
     align-items: center;
 }
 
+.todo-container .checked {
+    background-color: var(--raisin-clr);
+    color: grey;
+}
+
+.crossed-out {
+    text-decoration: line-through var(--cinnabar-clr);
+}
+
 /* Dialog styling */
 
 dialog {
