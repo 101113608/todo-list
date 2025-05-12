@@ -74,6 +74,7 @@ function createTodoListActions() {
     const div = document.createElement("div");
 
     div.classList.add("todo-list-actions");
+    div.setAttribute("data-todo-list-actions", "");
     div.append(
         createAddTodoButton(),
         createClearCheckedButton(),

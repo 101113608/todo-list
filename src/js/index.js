@@ -311,9 +311,11 @@ import { Extract } from "./logic/utility";
             return;
         }
 
-        if (e.target.closest("[data-add-todo-button]")) {
-            openModal("Add Todo", createTodoModal("Add"));
-            return;
+        if (e.target.closest("[data-todo-list-actions]") && e.target.closest("button")) {
+            if (e.target.closest("button").hasAttribute("data-add-todo-button")) {
+                openModal("Add Todo", createTodoModal("Add"));
+                return;
+            }
         }
 
         if (e.target.closest("[data-todo-shown-container]") && e.target.nodeName.toLowerCase() !== "input") {
