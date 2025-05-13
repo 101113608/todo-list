@@ -2,6 +2,7 @@ import deleteIcon from "../../../images/icons/delete.svg";
 import editIcon from "../../../images/icons/edit-square.svg";
 import calendarIcon from "../../../images/icons/calendar-clock.svg";
 import chevronRightArrow from "../../../images/icons/chevron-right.svg"
+import { format } from "date-fns";
 
 const ICON_SIZE = 24;
 const ARROW_SIZE = 30;
@@ -150,7 +151,7 @@ function createTodoDueDate(dueDate) {
     img.classList.add("due-date-icon");
 
     p.classList.add("due-date-text");
-    p.textContent = dueDate;
+    p.textContent = format(dueDate, "EEEE do MMMM, yyyy (dd/MM/yy)");
     p.setAttribute("data-todo-due-date", "");
 
     div.classList.add("todo-due-date");
