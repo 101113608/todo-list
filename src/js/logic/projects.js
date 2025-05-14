@@ -1,4 +1,5 @@
 import { Valid } from "./utility.js";
+import { ProjectsStorage } from "./localstorage.js";
 
 function createTodo(title, description, dueDate, priority, notes = "", checked = "false") {
     let state = {
@@ -226,8 +227,7 @@ class Projects {
             return;
         }
         Projects.#instantiated = true;
-        // TODO: Replace value with persistent storage solution
-        const storedProjectsList = null;
+        const storedProjectsList = ProjectsStorage.load();
         this.#projectsList = storedProjectsList ? storedProjectsList : [createProject("Default")];
     };
 

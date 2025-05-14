@@ -9,6 +9,7 @@ import { createMainHeading } from "./interface/main/main-project";
 import { createMainEmptyProjectsList } from "./interface/main/main-empty-projects-list";
 import { createMainEmptyTodoList } from "./interface/main/main-empty-todo-list";
 import { Extract } from "./logic/utility";
+import { ProjectsStorage } from "./logic/localstorage";
 
 (function () {
 
@@ -316,6 +317,7 @@ import { Extract } from "./logic/utility";
             }
             removeModal(modal);
             renderAll();
+            ProjectsStorage.save(projects.getProjectsList());
             return;
         }
     });
@@ -323,6 +325,7 @@ import { Extract } from "./logic/utility";
     body.addEventListener("change", e => {
         if (e.target.hasAttribute("data-todo-notes")) {
             setTodoNotes(e, projectTracker.getProject());
+            ProjectsStorage.save(projects.getProjectsList());
             return;
         }
     });
@@ -364,7 +367,8 @@ import { Extract } from "./logic/utility";
 
             if (e.target.closest("button").hasAttribute("data-clear-checked-button")) {
                 clearCheckedTodos(projectTracker.getProject());
-                renderAll()
+                renderAll();
+                ProjectsStorage.save(projects.getProjectsList());
                 return;
             }
         }
@@ -393,18 +397,10 @@ import { Extract } from "./logic/utility";
 
         if (e.target.hasAttribute("data-todo-checked")) {
             setTodoChecked(e, projectTracker.getProject());
+            ProjectsStorage.save(projects.getProjectsList());
             return;
         }
     });
-
-    // Temp data
-    let newTodo1 = createTodo("Workout", "Leg day", "2025-07-07", "high");
-    let newTodo2 = createTodo("Homework", "Programming", "2025-09-17", "medium");
-
-    projects.getProject("Default").addTodo(newTodo1);
-    projects.getProject("Default").addTodo(newTodo2);
-
-    projects.addProject(createProject("Hello World"));
 
     renderAll();
 
