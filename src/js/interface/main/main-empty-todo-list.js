@@ -6,6 +6,7 @@ function createMainEmptyTodoList(projectName) {
     const div = document.createElement("div");
 
     div.classList.add("main-content", "empty-todo-list");
+    div.setAttribute("data-main-content", "");
     div.append(
         createMainEmptyImg(),
         createMainEmptyHeading(projectName),

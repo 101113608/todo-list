@@ -20,6 +20,7 @@ function createMainContent(todoList) {
 
     ul.classList.add("todo-list-container");
     div.classList.add("main-content");
+    div.setAttribute("data-main-content", "");
     div.append(ul);
 
     return div;

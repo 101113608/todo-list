@@ -14,6 +14,7 @@ function createMainHeading(projectTitle) {
     h1.textContent = projectTitle;
 
     div.classList.add("main-heading");
+    div.setAttribute("data-main-heading", "");
     div.append(
         h1,
         createProjectActions(),

@@ -55,17 +55,43 @@ import { ProjectsStorage } from "./logic/localstorage";
     function renderMain(project = null) {
         main.textContent = "";
         if (project) {
-            const heading = createMainHeading(project.getTitle());
-            let mainContent;
-
-            if (project.getTodoList().length === 0) {
-                mainContent = createMainEmptyTodoList(project.getTitle());
-            } else {
-                mainContent = createMainContent(project.getTodoList());
-            }
-            main.append(heading, mainContent);
+            renderMainHeading(project);
+            renderMainContent(project);
         } else {
             main.append(createMainEmptyProjectsList());
+        }
+    }
+
+    function renderMainContent(project) {
+        if (!project) {
+            console.error("Unable to render main content: no project provided.")
+            return;
+        }
+
+        const existingMainContent = document.querySelector("[data-main-content]");
+        const mainContent = project.getTodoList().length === 0
+            ? createMainEmptyTodoList(project.getTitle())
+            : createMainContent(project.getTodoList());
+
+        if (existingMainContent) {
+            existingMainContent.replaceWith(mainContent);
+        } else {
+            main.append(mainContent)
+        }
+    }
+
+    function renderMainHeading(project) {
+        if (!project) {
+            console.error("Unable to render main header: no project provided.");
+            return;
+        }
+
+        let mainHeading = document.querySelector("[data-main-heading]");
+        if (mainHeading) {
+            mainHeading.replaceWith(createMainHeading(project.getTitle()));
+        } else {
+            mainHeading = createMainHeading(project.getTitle());
+            main.append(mainHeading);
         }
     }
 

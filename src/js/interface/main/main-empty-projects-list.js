@@ -6,6 +6,7 @@ function createMainEmptyProjectsList() {
     const div = document.createElement("div");
 
     div.classList.add("main-content", "empty-projects-list");
+    div.setAttribute("data-main-content", "");
     div.append(
         createMainEmptyImg(),
         createMainEmptyHeading(),
