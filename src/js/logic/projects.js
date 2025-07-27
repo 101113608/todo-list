@@ -1,5 +1,6 @@
 import { Valid } from "./utility.js";
-import { ProjectsStorage } from "./localstorage.js";
+import { PubSub } from "./pub-sub.js";
+import { format } from "date-fns";
 
 function createTodo(title, description, dueDate, priority, notes = "", checked = "false") {
     let state = {
@@ -11,76 +12,119 @@ function createTodo(title, description, dueDate, priority, notes = "", checked =
         checked
     }
 
+    let success = null;
+
     const titleGetter = (stateArg) => ({ getTitle: () => stateArg.title });
     const titleSetter = (stateArg) => ({
         setTitle: (newTitle) => {
-            if (Valid.setterValue("Title", stateArg.title, newTitle)) {
-                const oldTitle = stateArg.title;
-                stateArg.title = newTitle;
-                console.log(`Todo '${oldTitle}' has been renamed to '${newTitle}'`);
-            } else {
-                console.error(`Unable to rename todo '${newTitle}'`);
+            const titleValues = {
+                variableName: "Title",
+                currentValue: stateArg.title,
+                newValue: newTitle
             }
+
+            if (!Valid.setterValue(titleValues)) {
+                console.info(`Unable to rename todo '${newTitle}': current and new value are the same.`);
+                success = false;
+                return success;
+            }
+
+            stateArg.title = newTitle;
+            success = true;
+            return success;
         }
     });
 
     const descriptionGetter = (stateArg) => ({ getDescription: () => stateArg.description });
     const descriptionSetter = (stateArg) => ({
         setDescription: (newDescription) => {
-            if (Valid.setterValue("Description", stateArg.description, newDescription)) {
-                stateArg.description = newDescription;
-                console.log(`Todo '${titleGetter(stateArg).getTitle()}'s description has been set.`);
-            } else {
-                console.error(`Unable to set the description of '${titleGetter(stateArg).getTitle()}'`);
+            const descriptionValues = {
+                variableName: "Description",
+                currentValue: stateArg.description,
+                newValue: newDescription
             }
+
+            if (!Valid.setterValue(descriptionValues)) {
+                console.info(`Unable to set the description of todo '${titleGetter(stateArg).getTitle()}': current and new values are the same.`);
+                success = false;
+                return success;
+            }
+
+            stateArg.description = newDescription;
+            success = true;
+            return success;
         }
     });
 
     const dueDateGetter = (stateArg) => ({ getDueDate: () => stateArg.dueDate });
     const dueDateSetter = (stateArg) => ({
         setDueDate: (newDueDate) => {
-            if (Valid.setterValue("Due Date", stateArg.dueDate, newDueDate)) {
-                stateArg.dueDate = new Date(newDueDate);
-                console.log(`Todo '${titleGetter(stateArg).getTitle()}'s due date has been set.`);
-            } else {
-                console.error(`Unable to set the due date of '${titleGetter(stateArg).getTitle()}'`);
+            const dueDateValues = {
+                variableName: "Due Date",
+                currentValue: format(stateArg.dueDate.getTime(), "yyyy-MM-dd"),
+                newValue: newDueDate
             }
+
+            if (!Valid.setterValue(dueDateValues)) {
+                console.info(`Unable to set the due date of todo '${titleGetter(stateArg).getTitle()}': current and new values are the same.`);
+                success = false;
+                return success;
+            }
+
+            stateArg.dueDate = new Date(newDueDate);
+            success = true;
+            return success;
         }
     });
 
     const priorityGetter = (stateArg) => ({ getPriority: () => stateArg.priority });
     const prioritySetter = (stateArg) => ({
         setPriority: (newPriority) => {
-            if (Valid.setterValue("Priority", stateArg.priority, newPriority)) {
-                stateArg.priority = newPriority;
-                console.log(`Todo '${titleGetter(stateArg).getTitle()}'s priority has been set.`);
-            } else {
-                console.error(`Unable to set the priority of '${titleGetter(stateArg).getTitle()}'`);
+            const priorityValues = {
+                variableName: "Priority",
+                currentValue: stateArg.priority,
+                newValue: newPriority
             }
+
+            if (!Valid.setterValue(priorityValues)) {
+                console.info(`Unable to set the priority of todo '${titleGetter(stateArg).getTitle()}': current and new values are the same.`);
+                success = false;
+                return success;
+            }
+
+            stateArg.priority = newPriority;
+            success = true;
+            return success;
         }
     });
 
     const notesGetter = (stateArg) => ({ getNotes: () => stateArg.notes });
     const notesSetter = (stateArg) => ({
         setNotes: (newNotes) => {
-            if (stateArg.notes !== newNotes) {
-                stateArg.notes = newNotes;
-                console.log(`Todo '${titleGetter(stateArg).getTitle()}'s notes has been set.`);
-            } else {
-                console.error(`Unable to set the notes of '${titleGetter(stateArg).getTitle()}'`);
+            if (stateArg.notes === newNotes) {
+                console.info(`Unable to set the notes of  todo '${titleGetter(stateArg).getTitle()}': current and new values are the same.`);
+                success = false;
+                return success;
             }
+
+            stateArg.notes = newNotes;
+            success = true;
+            return success;
         }
     });
 
     const checkedGetter = (stateArg) => ({ getChecked: () => stateArg.checked });
     const checkedSetter = (stateArg) => ({
         setChecked: (newChecked) => {
-            if (newChecked === "true" || newChecked === "false") {
-                stateArg.checked = newChecked;
-                console.log(`Todo '${titleGetter(stateArg).getTitle()}'s checked has been set.`);
-            } else {
-                console.error(`Unable to set the checked of ${titleGetter(stateArg).getTitle()}`);
+            if (!(newChecked === "true" || newChecked === "false")) {
+                console.error(`Unable to set the checked state of todo '${titleGetter(stateArg).getTitle()}': provided value isn't valid.`);
+                success = false;
+                return success;
             }
+
+            stateArg.checked = newChecked;
+            success = true;
+            return success;
         }
     });
 
@@ -107,18 +151,27 @@ function createProject(title, todoList = []) {
         todoList,
     }
 
+    let success = null;
+
     const titleGetter = (stateArg) => ({ getTitle: () => stateArg.title });
 
     const titleSetter = (stateArg) => ({
         setTitle: (newTitle) => {
-            if (Valid.setterValue("Title", stateArg.title, newTitle)) {
-                const oldTitle = stateArg.title;
-                stateArg.title = newTitle;
-                console.log(`Todo '${oldTitle}' has been renamed to '${newTitle}'`);
+            const titleValues = {
+                variableName: "Title",
+                currentValue: stateArg.title,
+                newValue: newTitle
             }
-            else {
-                console.error(`Unable to rename todo '${newTitle}'`);
+
+            if (!Valid.setterValue(titleValues)) {
+                console.info(`Unable to rename project '${newTitle}': current and new values are the same.`);
+                success = false;
+                return;
             }
+
+            stateArg.title = newTitle;
+            success = true;
+            return success;
         }
     });
 
@@ -134,13 +187,12 @@ function createProject(title, todoList = []) {
         getTodo: (todoTitleToGet) => {
             const todo = stateArg.todoList.find(todo => todo.getTitle() === todoTitleToGet);
 
-            if (Valid.objectValue(todo)) {
-                console.log(`Todo '${todoTitleToGet}' was retrieved.`);
-                return todo;
+            if (!Valid.objectValue(todo)) {
+                console.warn(`Todo was not retrieved: '${todoTitleToGet}' was not found.`);
+                return null;
             }
 
-            console.error(`Todo was not retrieved: '${todoTitleToGet}' was not found.`);
-            return null;
+            return todo;
         }
     });
 
@@ -148,12 +200,12 @@ function createProject(title, todoList = []) {
         getTodoViaIndex: (indexOfTodo) => {
             const todo = stateArg.todoList[indexOfTodo];
 
-            if (Valid.objectValue(todo)) {
-                console.log(`Todo '${todo.getTitle()}' was retrieved.`);
-                return todo;
+            if (!Valid.objectValue(todo)) {
+                console.warn(`Todo was not retrieved: index '${indexOfTodo}' was not found.`);
+                return null;
             }
-            console.error(`Todo was not retrieved: index '${indexOfTodo}' was not found.`);
-            return null;
+
+            return todo;
         }
     });
 
@@ -163,45 +215,53 @@ function createProject(title, todoList = []) {
                 return todo.getTitle() === todoTitle;
             });
 
-            if (Valid.indexValue(index)) {
-                console.log(`Index for Todo '${todoTitle}' was retrieved.`);
-                return index;
+            if (!Valid.indexValue(index)) {
+                console.warn(`Todo list index was not retrieved: '${todoTitle}' was not found.`);
+                return null;
             }
 
-            console.error(`Todo list index was not retrieved: '${todoTitle}' was not found.`);
-            return null;
+            return index;
         }
     });
 
     const todoAdder = (stateArg) => ({
         addTodo: (newTodo) => {
-            if (newTodo.getTitle) {
-                const newTodoTitle = newTodo.getTitle();
-                const todoExists = todoListGetter(stateArg).getTodoList().some(todo => {
-                    return todo.getTitle() === newTodoTitle;
-                });
+            success = false;
 
-                if (todoExists) {
-                    console.error(`Todo was not added: Todo '${newTodoTitle}' already exists.`);
-                } else {
-                    stateArg.todoList.push(newTodo);
-                    console.log(`Todo '${newTodoTitle}' has been added.`);
-                }
-            } else {
+            if (!newTodo.getTitle) {
                 console.error(`Todo was not added: Object passed was not a todo.`);
+                return success;
             }
+
+            const newTodoTitle = newTodo.getTitle();
+            const todoExists = todoListGetter(stateArg).getTodoList().some(todo => {
+                return todo.getTitle() === newTodoTitle;
+            });
+
+            if (todoExists) {
+                console.info(`Todo was not added: Todo '${newTodoTitle}' already exists.`);
+                return success;
+            }
+
+            stateArg.todoList.push(newTodo);
+            success = true;
+            return success;
         }
     });
 
     const todoRemover = (stateArg) => ({
         removeTodo: (todoTitleToRemove) => {
             const indexToRemove = indexGetterOfTodo(stateArg).getIndexOfTodo(todoTitleToRemove);
-            if (Valid.indexValue(indexToRemove)) {
-                stateArg.todoList.splice(indexToRemove, 1);
-                console.log(`Todo '${todoTitleToRemove}' has been removed.`);
-            } else {
-                console.error(`Todo was not removed: Todo '${todoTitleToRemove}' was not found.`);
+
+            if (!Valid.indexValue(indexToRemove)) {
+                console.warn(`Todo was not removed: Todo '${todoTitleToRemove}' was not found.`);
+                success = false;
+                return success;
             }
+
+            stateArg.todoList.splice(indexToRemove, 1);
+            success = true;
+            return success;
         }
     });
 
@@ -223,12 +283,15 @@ class Projects {
     static #instantiated = false;
     constructor() {
         if (Projects.#instantiated) {
-            console.error("Unable to instantiate: Cannot have more than one instance of Projects.");
+            console.warn("Unable to instantiate: Cannot have more than one instance of Projects.");
             return;
         }
+
         Projects.#instantiated = true;
-        const storedProjectsList = ProjectsStorage.load();
-        this.#projectsList = storedProjectsList ? storedProjectsList : [createProject("Default")];
+        this.#projectsList = [createProject("Default")];
+        this.#subscribeEvents();
+
+        PubSub.publish({ eventName: "projectsInstantiated" });
     };
 
     getProjectsList() {
@@ -237,60 +300,181 @@ class Projects {
 
     getProject(projectTitle) {
         const project = this.getProjectsList().find(project => project.getTitle() === projectTitle);
-        if (Valid.objectValue(project)) {
-            console.log(`Project '${projectTitle}' was retrieved.`)
-            return project;
+
+        if (!Valid.objectValue(project)) {
+            console.warn(`Project was not retrieved: '${projectTitle}' was not found.`);
+            return null;
         }
-        console.error(`Project was not retrieved: '${projectTitle}' was not found.`)
-        return null;
+
+        return project;
     }
 
     getProjectViaIndex(index) {
         const project = this.getProjectsList()[index];
-        if (Valid.objectValue(project)) {
-            console.log(`Project '${project.getTitle()}' was retrieved.`)
-            return project;
+
+        if (!Valid.objectValue(project)) {
+            console.warn(`Project was not retrieved: index '${index}' was not found.`);
+            return null;
         }
-        console.error(`Project was not retrieved: index '${index}' was not found.`)
-        return null;
+
+        return project;
     }
 
     getIndexOfProject(projectTitle) {
         const index = this.getProjectsList().findIndex(project => project.getTitle() === projectTitle);
-        if (Valid.indexValue(index)) {
-            console.log(`Index for project '${projectTitle}' was retrieved.`);
-            return index;
+
+        if (!Valid.indexValue(index)) {
+            console.warn(`Projects index was not retrieved: '${projectTitle}' was not found.`);
+            return null;
         }
-        console.error(`Projects index was not retrieved: '${projectTitle}' was not found.`);
-        return null;
+
+        return index;
     }
 
     addProject(newProject) {
-        if (newProject.getTitle) {
-            const newProjectTitle = newProject.getTitle();
-            const projectExists = this.getProjectsList().some(project => {
-                return project.getTitle() === newProjectTitle;
-            });
+        const projectPropertyExists = newProject.getTitle;
 
-            if (projectExists) {
-                console.error(`Project was not added: Project '${newProjectTitle}' already exists.`);
-            } else {
-                this.#projectsList.push(newProject);
-                console.log(`Project '${newProjectTitle}' has been added.`);
-            }
-        } else {
+        if (!projectPropertyExists) {
             console.error(`Project was not added: Object passed was not a project.`);
+            return;
         }
+
+        const newProjectTitle = newProject.getTitle();
+        const projectExists = this.getProjectsList().some(project => {
+            return project.getTitle() === newProjectTitle;
+        });
+
+        if (projectExists) {
+            console.info(`Project was not added: '${newProjectTitle}' already exists.`);
+            return;
+        }
+
+        let emptyProjectTracker = false;
+
+        if (this.#projectsList.length === 0) {
+            emptyProjectTracker = true;
+        }
+
+        this.#projectsList.push(newProject);
+        PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+
+        if (emptyProjectTracker) {
+            const indexStart = 0;
+            PubSub.publish({ eventName: "projectIndexUpdated", data: indexStart });
+        }
+
+        return;
     }
 
     removeProject(projectTitle) {
         const indexToRemove = this.getIndexOfProject(projectTitle);
-        if (Valid.indexValue(indexToRemove)) {
-            this.#projectsList.splice(indexToRemove, 1);
-            console.log(`Project '${projectTitle}' has been removed.`);
-        } else {
-            console.error(`Project '${projectTitle}' was not removed: Project was not found.`);
+
+        if (!Valid.indexValue(indexToRemove)) {
+            console.warn(`Project '${projectTitle}' was not removed: Project was not found.`);
+            return;
         }
+
+        const removedProject = this.#projectsList.splice(indexToRemove, 1);
+
+        PubSub.publish({ eventName: "projectDeleted", data: removedProject });
+        PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+
+        return;
+    }
+
+    #loadProjects(projectsList) {
+        if (projectsList) {
+            this.#projectsList = projectsList;
+            return projectsList;
+        }
+    }
+
+    #editProject(data) {
+        const currentProject = this.getProject(data.currentProject.title);
+        const isSet = currentProject.setTitle(data.newTitle);
+
+        if (isSet) {
+            PubSub.publish({ eventName: "currentProjectUpdated", data: currentProject });
+            PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+        }
+    }
+
+    #addTodo(data) {
+        const currentProject = this.getProject(data.currentProject.getTitle());
+        const isAdded = currentProject.addTodo(data.newTodo);
+
+        if (isAdded) {
+            PubSub.publish({ eventName: "todoListUpdated", data: currentProject.getTodoList() });
+            PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+        }
+    }
+
+    #removeTodo(data) {
+        const currentProject = this.getProject(data.currentProject.getTitle());
+        const isRemoved = currentProject.removeTodo(data.formData.deleteTodoTitle);
+
+        if (isRemoved) {
+            PubSub.publish({ eventName: "todoListUpdated", data: currentProject.getTodoList() });
+            PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+        }
+    }
+
+    #editTodo(data) {
+        const currentProject = this.getProject(data.currentProject.getTitle());
+        const currentTodo = currentProject.getTodo(data.formData.currentTodoTitle);
+
+        currentTodo.setTitle(data.formData.todoTitle);
+        currentTodo.setDescription(data.formData.todoDescription);
+        currentTodo.setDueDate(data.formData.todoDueDate);
+        currentTodo.setPriority(data.formData.todoPriority);
+
+        PubSub.publish({ eventName: "todoListUpdated", data: currentProject.getTodoList() });
+        PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+    }
+
+    #editTodoNotes(data) {
+        const currentTodo = data.currentTodo;
+
+        currentTodo.setNotes(data.todoNotes);
+        PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+    }
+
+    #editTodoChecked(data) {
+        const currentTodo = data.currentTodo;
+
+        currentTodo.setChecked(data.todoChecked);
+        PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+    }
+
+    #clearCheckedTodos(projectTitle) {
+        const currentProject = this.getProject(projectTitle);
+        const emptyTodoList = currentProject.getTodoList().length === 0 ? true : false;
+
+        if (!emptyTodoList) {
+
+            currentProject.getTodoList().forEach(todo => {
+                if (todo.getChecked() === "true") {
+                    const todoTitle = todo.getTitle();
+                    currentProject.removeTodo(todoTitle);
+                }
+            });
+
+            PubSub.publish({ eventName: "todoListUpdated", data: currentProject.getTodoList() });
+            PubSub.publish({ eventName: "projectsListUpdated", data: this.getProjectsList() });
+        }
+    }
+
+    #subscribeEvents() {
+        PubSub.subscribe({ eventName: "projectsLoaded", callbackFn: this.#loadProjects.bind(this) })
+        PubSub.subscribe({ eventName: "newProjectCreated", callbackFn: this.addProject.bind(this) });
+        PubSub.subscribe({ eventName: "projectEdited", callbackFn: this.#editProject.bind(this) });
+        PubSub.subscribe({ eventName: "deleteProjectRequested", callbackFn: this.removeProject.bind(this) });
+        PubSub.subscribe({ eventName: "newTodoCreated", callbackFn: this.#addTodo.bind(this) });
+        PubSub.subscribe({ eventName: "todoEdited", callbackFn: this.#editTodo.bind(this) });
+        PubSub.subscribe({ eventName: "deleteTodoRequested", callbackFn: this.#removeTodo.bind(this) });
+        PubSub.subscribe({ eventName: "todoNotesUpdated", callbackFn: this.#editTodoNotes.bind(this) });
+        PubSub.subscribe({ eventName: "todoCheckedUpdated", callbackFn: this.#editTodoChecked.bind(this) });
+        PubSub.subscribe({ eventName: "clearCheckedBtnClicked", callbackFn: this.#clearCheckedTodos.bind(this) });
     }
 }
 

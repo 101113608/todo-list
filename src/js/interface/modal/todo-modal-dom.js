@@ -1,9 +1,16 @@
-function createTodoModal(type) {
+function createTodoModal({ actionType, currentTodo = null }) {
     const modal = document.createElement("dialog");
     const div = document.createElement("div");
+    let todo = currentTodo ? currentTodo : {};
+
+    if (!actionType) {
+        throw new Error("Unable to create todo modal: missing action type.");
+    }
 
     div.classList.add("todo-modal-content");
-    div.append(createTodoForm(type));
+    div.append(
+        createTodoForm({ actionType, currentTodo: todo })
+    );
 
     modal.classList.add("todo-modal");
     modal.append(div);
@@ -11,46 +18,50 @@ function createTodoModal(type) {
     return modal;
 }
 
-function createTodoForm(type) {
+function createTodoForm({ actionType, currentTodo }) {
     const form = document.createElement("form");
 
     form.action = "/";
     form.setAttribute("onsubmit", "event.preventDefault()");
     form.append(
-        createAddProjectHeading(type),
-        createTodoTitleInput(),
-        createTodoDueDateInput(),
-        createTodoPriorityInput(),
-        createTodoDescriptionInput(),
-        createDivActionButtons(type),
-        createHiddenInput(),
+        createAddProjectHeading(actionType),
+        createTodoTitleInput(currentTodo.title),
+        createTodoDueDateInput(currentTodo.dueDate),
+        createTodoPriorityInput(currentTodo.priority),
+        createTodoDescriptionInput(currentTodo.description),
+        createDivActionButtons(actionType),
+        createHiddenInput(currentTodo.title),
     );
 
     return form;
 }
 
-function createHiddenInput() {
+function createHiddenInput(currentTodoTitle = null) {
     const input = document.createElement("input");
     input.type = "hidden";
     input.id = "currentTodoTitle";
     input.name = "currentTodoTitle";
 
+    if (currentTodoTitle) {
+        input.value = currentTodoTitle;
+    }
+
     return input;
 }
 
-function createAddProjectHeading(type) {
+function createAddProjectHeading(actionType) {
     const h2 = document.createElement("h2");
     let headingTextContent;
 
-    switch(type) {
-        case "Add":
+    switch (actionType) {
+        case "add":
             headingTextContent = "Add a"
             break;
-        case "Edit":
+        case "edit":
             headingTextContent = "Edit";
             break;
         default:
-            console.error("Modal type provided was not valid.");
+            console.error("The provided action for the modal was not valid.");
             headingTextContent = "Error";
     }
 
@@ -66,7 +77,7 @@ function createFormInputDiv() {
     return div;
 }
 
-function createTodoTitleInput() {
+function createTodoTitleInput(currentTodoTitle = null) {
     const div = createFormInputDiv();
     const label = document.createElement("label");
     const input = document.createElement("input");
@@ -79,13 +90,17 @@ function createTodoTitleInput() {
     input.name = "todoTitle";
     input.setAttribute("required", "");
 
+    if (currentTodoTitle) {
+        input.value = currentTodoTitle;
+    }
+
     div.classList.add("form-todo-title");
     div.append(label, input);
 
     return div;
 }
 
-function createTodoDueDateInput() {
+function createTodoDueDateInput(currentTodoDate = null) {
     const div = createFormInputDiv();
     const label = document.createElement("label");
     const input = document.createElement("input");
@@ -98,13 +113,17 @@ function createTodoDueDateInput() {
     input.name = "todoDueDate";
     input.setAttribute("required", "");
 
+    if (currentTodoDate) {
+        input.value = currentTodoDate;
+    }
+
     div.classList.add("form-todo-due-date");
     div.append(label, input);
 
     return div;
 }
 
-function createOptionValue(value, label) {
+function createOptionValue({ value, label }) {
     const option = document.createElement("option");
 
     option.value = value;
@@ -113,14 +132,14 @@ function createOptionValue(value, label) {
     return option;
 }
 
-function createTodoPriorityInput() {
+function createTodoPriorityInput(currentTodoPriority = null) {
     const div = createFormInputDiv();
     const select = document.createElement("select");
     const label = document.createElement("label");
-    const selectOption = createOptionValue("", "-- Select a priority --");
-    const lowOption = createOptionValue("low", "Low");
-    const mediumOption = createOptionValue("medium", "Medium");
-    const highOption = createOptionValue("high", "High");
+    const selectOption = createOptionValue({ value: "", label: "-- Select a priority --" });
+    const lowOption = createOptionValue({ value: "low", label: "Low" });
+    const mediumOption = createOptionValue({ value: "medium", label: "Medium" });
+    const highOption = createOptionValue({ value: "high", label: "High" });
 
     label.setAttribute("for", "todoPriority");
     label.textContent = "Priority";
@@ -133,14 +152,17 @@ function createTodoPriorityInput() {
     select.append(selectOption, lowOption, mediumOption, highOption);
     select.setAttribute("required", "");
 
+    if (currentTodoPriority) {
+        select.value = currentTodoPriority;
+    }
+
     div.classList.add("form-todo-priority");
     div.append(label, select);
 
     return div;
-
 }
 
-function createTodoDescriptionInput() {
+function createTodoDescriptionInput(currentTodoDesc = null) {
     const div = createFormInputDiv();
     const label = document.createElement("label");
     const textarea = document.createElement("textarea");
@@ -152,13 +174,17 @@ function createTodoDescriptionInput() {
     textarea.name = "todoDescription";
     textarea.setAttribute("required", "");
 
+    if (currentTodoDesc) {
+        textarea.value = currentTodoDesc;
+    }
+
     div.classList.add("form-todo-description");
     div.append(label, textarea);
 
     return div;
 }
 
-function createDivActionButtons(type) {
+function createDivActionButtons(actionType) {
     const div = document.createElement("div");
     const cancelBtn = document.createElement("button");
     const submitBtn = document.createElement("button");
@@ -167,15 +193,15 @@ function createDivActionButtons(type) {
     cancelBtn.textContent = "Cancel";
     cancelBtn.setAttribute("type", "reset");
 
-    switch(type) {
-        case "Add":
+    switch (actionType) {
+        case "add":
             submitBtnTextContent = "Add";
             break;
-        case "Edit":
+        case "edit":
             submitBtnTextContent = "Save";
             break;
         default:
-            console.error("Modal type provided was not valid.");
+            console.error("The provided action for the modal was not valid.");
             submitBtnTextContent = "Error";
     }
 

@@ -1,13 +1,12 @@
 import deleteIcon from "../../../images/icons/delete.svg";
 import editIcon from "../../../images/icons/edit-square.svg";
 import calendarIcon from "../../../images/icons/calendar-clock.svg";
-import chevronRightArrow from "../../../images/icons/chevron-right.svg"
+import chevronRightArrow from "../../../images/icons/chevron-right.svg";
+
 import { format } from "date-fns";
 
 const ICON_SIZE = 24;
 const ARROW_SIZE = 30;
-
-// 'Todo' list container
 
 function createMainContent(todoList) {
     const div = document.createElement("div");
@@ -57,6 +56,7 @@ function createTodoItem(title, dueDate, priority, checked) {
     if (checked === "true") {
         div.classList.add("checked", "crossed-out");
     }
+
     div.classList.add("todo-item");
     div.setAttribute("data-todo-shown-container", "");
     div.setAttribute("role", "group");
@@ -130,6 +130,7 @@ function createTodoTitle(title, priority) {
         default:
             console.error("Unable to add priority circle: Priority passed in was not valid");
     }
+
     priorityCircle.classList.add("priority-circle");
 
     p.classList.add("title-text");
@@ -161,9 +162,6 @@ function createTodoDueDate(dueDate) {
     return div;
 }
 
-
-// 'Todo' Expanded Information
-
 function createTodoItemExpanded(description, priority, notes, checked) {
     const todoHiddenContainer = document.createElement("div");
     const todoExpandedContainer = document.createElement("div");
@@ -183,6 +181,7 @@ function createTodoItemExpanded(description, priority, notes, checked) {
     if (checked === "true") {
         todoHiddenContainer.classList.add("checked");
     }
+
     todoHiddenContainer.classList.add("todo-hidden-container");
     todoHiddenContainer.setAttribute("data-todo-hidden-container", "");
     todoHiddenContainer.append(todoExpandedContainer);

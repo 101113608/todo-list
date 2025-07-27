@@ -2,14 +2,15 @@ function createSidebarProjectsList(projectsList) {
     const ul = document.createElement("ul");
 
     for (let [index, project] of projectsList.entries()) {
-        const li = createProjectListItem(project, index);
+        const li = createProjectListItem({ project, index });
         ul.append(li);
     }
+    ul.setAttribute("data-sidebar-projects-list", "");
 
     return ul;
 }
 
-function createProjectListItem(project, index) {
+function createProjectListItem({ project, index }) {
     const li = document.createElement("li");
     const button = document.createElement("button");
 
@@ -19,7 +20,10 @@ function createProjectListItem(project, index) {
 
     button.setAttribute("data-project-index", index);
     button.classList.add("project-list-item");
-    button.append(createProjectTitle(project.getTitle()), createTodoCount(project.getTodoList().length));
+    button.append(
+        createProjectTitle(project.getTitle()),
+        createTodoCount(project.getTodoList().length)
+    );
 
     li.append(button);
 
@@ -45,6 +49,5 @@ function createTodoCount(todoLength) {
 
     return span;
 }
-
 
 export { createSidebarProjectsList };

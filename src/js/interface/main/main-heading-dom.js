@@ -5,7 +5,7 @@ import removeCheckedIcon from "../../../images/icons/remove-done.svg";
 
 const ICON_SIZE = 24;
 
-function createMainHeading(projectTitle) {
+function createMainHeading(projectTitle = null) {
     const div = document.createElement("div");
     const h1 = document.createElement("h1");
 
@@ -15,11 +15,16 @@ function createMainHeading(projectTitle) {
 
     div.classList.add("main-heading");
     div.setAttribute("data-main-heading", "");
-    div.append(
-        h1,
-        createProjectActions(),
-        createTodoListActions(),
-    );
+
+    if (projectTitle) {
+        div.append(
+            h1,
+            createProjectActions(),
+            createTodoListActions(),
+        );
+    } else {
+        div.append(h1);
+    }
 
     return div;
 }

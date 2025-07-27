@@ -1,15 +1,17 @@
 class Valid {
-    static setterValue(variableName, currentValue, newValue) {
+    static setterValue({ variableName, currentValue, newValue }) {
         let valid = false;
+
         if (!newValue) {
-            console.error(`${variableName} was not updated: provided value is null/empty.`);
+            console.warn(`'${variableName}' was not updated: provided value is null/empty.`);
             return valid;
         }
 
         if (currentValue === newValue) {
-            console.error(`${variableName} was not updated: provided value is the same as the current value.`);
+            console.warn(`'${variableName}' was not updated: provided value is the same as the current value.`);
             return valid;
         }
+
         valid = true;
         return valid;
     }
@@ -18,6 +20,7 @@ class Valid {
         if (index !== -1 && index !== null && index !== undefined && typeof index === "number") {
             return true;
         }
+
         return false;
     }
 
@@ -25,6 +28,7 @@ class Valid {
         if (object !== null && object !== undefined && typeof object === "object") {
             return true;
         }
+
         return false;
     }
 }
@@ -42,4 +46,10 @@ class Extract {
     }
 }
 
-export { Valid, Extract };
+function capitaliseString(string) {
+    if (string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+}
+
+export { Valid, Extract, capitaliseString };

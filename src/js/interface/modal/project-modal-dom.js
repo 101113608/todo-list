@@ -1,53 +1,62 @@
-function createProjectModal(type) {
+function createProjectModal({ actionType, currentProject = null }) {
     const modal = document.createElement("dialog");
     const div = document.createElement("div");
+    let project = currentProject ? currentProject : {};
+
+    if (!actionType) {
+        throw new Error("Unable to create project modal: missing action type.");
+    }
 
     div.classList.add("project-modal-content");
     modal.classList.add("project-modal");
 
-    div.append(createProjectForm(type));
+    div.append(createProjectForm({ actionType, currentProject: project }));
     modal.append(div);
 
     return modal;
 }
 
-function createProjectForm(type) {
+function createProjectForm({ actionType, currentProject }) {
     const form = document.createElement("form");
 
     form.action = "/";
     form.setAttribute("onsubmit", "event.preventDefault()");
     form.append(
-        createAddProjectHeading(type),
-        createAddProjectInput(),
-        createDivActionButtons(type),
-        createHiddenInput(),
+        createAddProjectHeading(actionType),
+        createAddProjectInput(currentProject.title),
+        createDivActionButtons(actionType),
+        createHiddenInput(currentProject.title),
     );
 
     return form;
 }
 
-function createHiddenInput() {
+function createHiddenInput(currentProjectTitle = null) {
     const input = document.createElement("input");
     input.type = "hidden";
     input.id = "currentProjectTitle";
     input.name = "currentProjectTitle";
 
+    if (currentProjectTitle) {
+        input.value = currentProjectTitle;
+    }
+
     return input;
 }
 
-function createAddProjectHeading(type) {
+function createAddProjectHeading(actionType) {
     const h2 = document.createElement("h2");
     let headingTextContent;
 
-    switch(type) {
-        case "Add":
+    switch (actionType) {
+        case "add":
             headingTextContent = "Add a";
             break;
-        case "Edit":
+        case "edit":
             headingTextContent = "Edit";
             break;
         default:
-            console.error("Modal type provided was not valid.");
+            console.error("The provided action for the modal was not valid.");
             headingTextContent = "Error";
     }
 
@@ -56,7 +65,7 @@ function createAddProjectHeading(type) {
     return h2;
 }
 
-function createAddProjectInput() {
+function createAddProjectInput(currentProjectTitle = null) {
     const input = document.createElement("input");
 
     input.setAttribute("type", "text");
@@ -65,10 +74,14 @@ function createAddProjectInput() {
     input.setAttribute("id", "projectTitle");
     input.setAttribute("name", "projectTitle");
 
+    if (currentProjectTitle) {
+        input.value = currentProjectTitle;
+    }
+
     return input;
 }
 
-function createDivActionButtons(type) {
+function createDivActionButtons(actionType) {
     const div = document.createElement("div");
     const cancelBtn = document.createElement("button");
     const submitBtn = document.createElement("button");
@@ -77,15 +90,15 @@ function createDivActionButtons(type) {
     cancelBtn.textContent = "Cancel";
     cancelBtn.setAttribute("type", "reset");
 
-    switch(type) {
-        case "Add":
+    switch (actionType) {
+        case "add":
             submitBtnTextContent = "Add";
             break;
-        case "Edit":
+        case "edit":
             submitBtnTextContent = "Save";
             break;
         default:
-            console.error("Modal type provided was not valid.");
+            console.error("The provided action for the modal was not valid.");
             submitBtnTextContent = "Error";
     }
 
